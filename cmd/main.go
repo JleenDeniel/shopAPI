@@ -1,18 +1,40 @@
-package main 
+package main
 
 import (
-	"net/http"
+	"context"
+	pb "example.com/mymodule/gen/go"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
 	"log"
+	"net"
+	"net/http"
 )
 
-func main(){
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	log.Println("Запуск веб-сервера на http://127.0.0.1:3000")
-	err := http.ListenAndServe(":3000", mux)
-	log.Fatal(err)
+type shopAPiServer struct {
+	pb.UnimplementedShopAPIServer
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Привет!"))
+func (s *shopAPiServer) AddToCart(ctx context.Context, req *pb.AddToCartRequest) (*pb.AddToCartResponse, error) {
+	return &pb.AddToCartResponse{}, nil
+}
+
+func main() {
+	go func() {
+		mux := runtime.NewServeMux()
+		err := pb.RegisterShopAPIHandlerServer(context.Background(), mux, &shopAPiServer{})
+		if err != nil {
+			return
+		}
+		log.Fatalln(http.ListenAndServe("localhost:8081", mux))
+	}()
+	listener, err := net.Listen("tcp", "localhost:8080")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	grpcServer := grpc.NewServer()
+	pb.RegisterShopAPIServer(grpcServer, &shopAPiServer{})
+	err = grpcServer.Serve(listener)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
