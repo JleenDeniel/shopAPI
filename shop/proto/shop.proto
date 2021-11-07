@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package shop;
+
+import "google/protobuf/empty.proto";
+import "google/apiannotations.proto";
+
+service shopAPI{
+  rpc addToCart(addToCartRequest) returns (addToCartResponse) {
+    option (google.api.http) ={
+      post: "/addtocart"
+    };
+  }
+
+  rpc getCartConsist(google.protobuf.Empty) returns (getCartConsistResponse) {
+    option (google.api.http) = {
+      get: "/getcartconsist"
+    };
+  }
+
+  rpc deleteFromCart(deleteFromCartRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/deletefromcart"
+    };
+  }
+}
+
+message addToCartRequest{
+  string sku = 1;
+}
+
+message addToCartResponse{
+  string id = 1;
+}
+
+message getCartConsistRequest{
+  string id_user = 1;
+}
+
+message getCartConsistResponse{
+   repeated PairInCart pairs = 1;
+}
+
+message PairInCart{
+  string skuName = 1;
+  int32 skuCount = 2;
+}
+
+message deleteFromCartRequest{
+  string sku = 1;
+}

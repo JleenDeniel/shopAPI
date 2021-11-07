@@ -4,7 +4,7 @@ services:
   shopapi:
     image: shopapi
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ../..
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
