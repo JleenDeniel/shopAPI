@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package shop;
+option go_package = "./";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+service shopAPI{
+  rpc addToCart(addToCartRequest) returns (addToCartResponse) {
+    option (google.api.http) ={
+      post: "/addtocart"
+    };
+  }
+
+  rpc getCartConsist(google.protobuf.Empty) returns (getCartConsistResponse) {
+    option (google.api.http) = {
+      get: "/getcartconsist"
+    };
+  }
+
+  rpc deleteFromCart(deleteFromCartRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/deletefromcart"
+    };
+  }
+
+  rpc createNewClientAccount(createNewClientAccountRequest) returns (createNewClientAccountResponse) {
+    option(google.api.http) = {
+      post: "/createNewAccount"
+    };
+  }
+  rpc loginClient(loginClientRequest) returns (loginClientResponse) {
+    option(google.api.http) = {
+      post: "/login"
+    };
+  }
+  rpc logoutClient(logoutClientRequest) returns (logoutClientResponse) {
+    option(google.api.http) = {
+      get: "/logout"
+    };
+  }
+}
+
+message addToCartRequest{
+  string sku = 1;
+}
+
+message addToCartResponse{
+  string id = 1;
+}
+
+message getCartConsistRequest{
+  string id_user = 1;
+}
+
+message getCartConsistResponse{
+   repeated PairInCart pairs = 1;
+}
+
+message PairInCart{
+  string skuName = 1;
+  int32 skuCount = 2;
+}
+
+message deleteFromCartRequest{
+  string sku = 1;
+}
+
+
+message createNewClientAccountRequest{
+  string name = 1;
+  string encryptedPassword = 2;
+}
+
+message createNewClientAccountResponse{
+  int32 state = 1;
+}
+
+message loginClientRequest{
+  string name = 1;
+  string encryptedPassword = 2;
+}
+
+message loginClientResponse{
+  int32 state = 1;
+}
+
+message logoutClientRequest{
+  string cookies = 1;
+}
+
+message logoutClientResponse{
+  int32 state = 1;
+}
